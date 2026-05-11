@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pınar Kedi 🐱</title>
+<link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #FDF6EC;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(255,180,100,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(255,140,60,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.floor {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 38vh;
+  background: linear-gradient(180deg, #F5E6D0 0%, #EDD8B8 100%);
+  border-top: 3px solid rgba(200,160,100,0.25);
+  z-index: 0;
+}
+.title {
+  position: fixed;
+  top: 32px;
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: clamp(22px, 5vw, 38px);
+  color: #E8834A;
+  letter-spacing: 2px;
+  z-index: 10;
+  text-shadow: 0 2px 12px rgba(232,131,74,0.2);
+  animation: fadeDown 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+  text-align: center;
+  padding: 0 16px;
+}
+@keyframes fadeDown {
+  from { opacity:0; transform: translateY(-20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.mood-badge {
+  position: fixed;
+  top: 82px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(180,130,80,0.75);
+  letter-spacing: 1px;
+  z-index: 10;
+  min-height: 20px;
+  text-align: center;
+  padding: 0 16px;
+  transition: opacity 0.3s;
+  animation: fadeDown 1s 0.4s both;
+}
+.hint {
+  position: fixed;
+  bottom: 28px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(180,140,100,0.75);
+  letter-spacing: 0.5px;
+  z-index: 10;
+  text-align: center;
+  padding: 0 20px;
+  animation: fadeUp 1s 1.2s both;
+  line-height: 1.6;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+#sceneWrapper {
+  position: fixed;
+  bottom: 22vh;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+.cat-scene {
+  pointer-events: all;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.cat-wrap {
+  position: relative;
+  width: clamp(160px, 35vw, 260px);
+  height: clamp(160px, 35vw, 260px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.cat-tail {
+  position: absolute;
+  bottom: 18%; right: -8%;
+  width: 52%; height: 52%;
+  z-index: 1;
+  transform-origin: 15% 85%;
+  animation: tailIdle 3s ease-in-out infinite;
+}
+@keyframes tailIdle {
+  0%,100% { transform: rotate(-10deg); }
+  50%      { transform: rotate(10deg); }
+}
+.cat-scene.petting .cat-tail  { animation: tailHappy 0.4s ease-in-out infinite; }
+@keyframes tailHappy {
+  0%,100% { transform: rotate(-25deg); }
+  50%      { transform: rotate(25deg); }
+}
+.cat-scene.angry .cat-tail    { animation: tailAngry 0.25s ease-in-out infinite; }
+@keyframes tailAngry {
+  0%,100% { transform: rotate(-30deg) scaleY(1.1); }
+  50%      { transform: rotate(30deg) scaleY(1.1); }
+}
+.cat-scene.walking .cat-tail  { animation: tailWalk 0.5s ease-in-out infinite; }
+@keyframes tailWalk {
+  0%,100% { transform: rotate(20deg); }
+  50%      { transform: rotate(-5deg); }
+}
+.cat-body-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.cat-scene:not(.petting):not(.walking):not(.angry) .cat-body-wrap {
+  animation: bodyIdle 3.5s ease-in-out infinite;
+}
+@keyframes bodyIdle {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.cat-scene.petting .cat-body-wrap  { animation: bodyPet 0.35s ease-in-out infinite; }
+@keyframes bodyPet {
+  0%,100% { transform: scaleY(1) scaleX(1); }
+  50%      { transform: scaleY(0.94) scaleX(1.04); }
+}
+.cat-scene.angry .cat-body-wrap    { animation: bodyAngry 0.2s ease-in-out infinite; }
+@keyframes bodyAngry {
+  0%,100% { transform: scaleX(1); }
+  50%      { transform: scaleX(1.05); }
+}
+.cat-scene.walking .cat-body-wrap  { animation: bodyWalk 0.5s ease-in-out infinite; }
+@keyframes bodyWalk {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-3px) rotate(-1.5deg); }
+  75%      { transform: translateY(-3px) rotate(1.5deg); }
+}
+.cat-shadow {
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 65%; height: 10px;
+  background: rgba(160,110,60,0.18);
+  border-radius: 50%;
+  filter: blur(4px);
+  z-index: 0;
+}
+.hearts-wrap {
+  position: absolute;
+  top: -20px; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 80px;
+  pointer-events: none;
+  z-index: 10;
+}
+.heart {
+  position: absolute;
+  opacity: 0;
+  animation: heartFloat 1.4s ease-out forwards;
+  left: 50%;
+}
+@keyframes heartFloat {
+  0%   { opacity:0; transform: translate(-50%,0) scale(0.5); }
+  20%  { opacity:1; transform: translate(-50%,-10px) scale(1.1); }
+  80%  { opacity:0.8; }
+  100% { opacity:0; transform: translate(calc(-50% + var(--hx)), -80px) scale(0.6); }
+}
+.sparks-wrap {
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 80px;
+  pointer-events: none;
+  z-index: 10;
+}
+.spark {
+  position: absolute;
+  opacity: 0;
+  animation: sparkFly 0.9s ease-out forwards;
+  left: 50%;
+}
+@keyframes sparkFly {
+  0%   { opacity:0; transform: translate(-50%,0) scale(0.4); }
+  15%  { opacity:1; }
+  100% { opacity:0; transform: translate(calc(-50% + var(--sx)), var(--sy)) scale(0.5) rotate(var(--sr)); }
+}
+.purr-text {
+  position: absolute;
+  top: -48px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: 18px;
+  color: #E8834A;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 11;
+  text-shadow: 0 2px 8px rgba(232,131,74,0.3);
+  transition: opacity 0.3s;
+}
+.cat-scene.petting .purr-text {
+  opacity: 1;
+  animation: purrPulse 0.8s ease-in-out infinite;
+}
+@keyframes purrPulse {
+  0%,100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.06); }
+}
+.angry-text {
+  position: absolute;
+  top: -48px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: 18px;
+  color: #E84A4A;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 11;
+  transition: opacity 0.3s;
+}
+.cat-scene.angry .angry-text {
+  opacity: 1;
+  animation: angryShake 0.15s ease-in-out infinite;
+}
+@keyframes angryShake {
+  0%,100% { transform: translateX(calc(-50% - 2px)); }
+  50%      { transform: translateX(calc(-50% + 2px)); }
+}
+.cat-scene.walk-right { animation: walkRight 2.2s cubic-bezier(0.4,0,0.2,1) forwards; }
+.cat-scene.walk-left  { animation: walkLeft  2.2s cubic-bezier(0.4,0,0.2,1) forwards; }
+@keyframes walkRight {
+  0%   { transform: translateX(0) scaleX(1); }
+  100% { transform: translateX(140vw) scaleX(1); }
+}
+@keyframes walkLeft {
+  0%   { transform: translateX(0) scaleX(-1); }
+  100% { transform: translateX(-140vw) scaleX(-1); }
+}
+.cat-scene.come-from-right { animation: comeFromRight 1.8s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+.cat-scene.come-from-left  { animation: comeFromLeft  1.8s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+@keyframes comeFromRight {
+  0%   { transform: translateX(140vw); }
+  100% { transform: translateX(0); }
+}
+@keyframes comeFromLeft {
+  0%   { transform: translateX(-140vw) scaleX(-1); }
+  100% { transform: translateX(0) scaleX(1); }
+}
+</style>
+</head>
+<body>
+<div class="floor"></div>
+<div class="title">Pınar kedi ilgi bekliyor 🐱</div>
+<div class="mood-badge" id="moodBadge">dokunmayı bekliyor... 🐾</div>
+<div id="sceneWrapper">
+  <div class="cat-scene" id="cat"
+    onmousedown="startPet(event)" onmouseup="stopPet()" onmouseleave="stopPet()"
+    ontouchstart="startPet(event)" ontouchend="stopPet()" ontouchcancel="stopPet()">
+    <div class="purr-text" id="purrText">purrr... 😻</div>
+    <div class="angry-text" id="angryText">HFSSS! 😾</div>
+    <div class="hearts-wrap" id="heartsWrap"></div>
+    <div class="sparks-wrap" id="sparksWrap"></div>
+    <div class="cat-wrap">
+      <svg class="cat-tail" viewBox="0 0 80 100" fill="none">
+        <path d="M20 90 Q60 70 65 40 Q68 20 55 10 Q48 4 42 12 Q38 18 45 22 Q55 28 50 45 Q44 65 15 78 Z" fill="#E8834A"/>
+        <path d="M20 90 Q55 72 60 44 Q63 26 52 16 Q48 12 44 16 Q41 20 46 23 Q54 30 48 48 Q41 67 16 80 Z" fill="#F4A060" opacity="0.6"/>
+      </svg>
+      <div class="cat-body-wrap" id="catBody">
+        <div class="cat-shadow"></div>
+        <svg viewBox="0 0 160 160" fill="none" style="width:100%;height:100%;position:relative;z-index:2;">
+          <ellipse cx="80" cy="110" rx="52" ry="42" fill="#E8834A"/>
+          <ellipse cx="80" cy="118" rx="28" ry="24" fill="#F9D4A8"/>
+          <path d="M52 88 Q58 100 54 114" stroke="#C86830" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.45"/>
+          <path d="M108 88 Q102 100 106 114" stroke="#C86830" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.45"/>
+          <ellipse cx="60" cy="148" rx="14" ry="9" fill="#E8834A"/>
+          <ellipse cx="100" cy="148" rx="14" ry="9" fill="#E8834A"/>
+          <ellipse cx="60" cy="150" rx="10" ry="6" fill="#F9D4A8"/>
+          <ellipse cx="100" cy="150" rx="10" ry="6" fill="#F9D4A8"/>
+          <ellipse cx="55" cy="152" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="61" cy="154" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="67" cy="152" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="95" cy="152" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="101" cy="154" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="107" cy="152" rx="3" ry="2" fill="#E8A090" opacity="0.8"/>
+          <ellipse cx="80" cy="68" rx="44" ry="40" fill="#E8834A"/>
+          <path d="M62 42 Q63 52 60 62" stroke="#C86830" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+          <path d="M80 36 Q80 46 80 56" stroke="#C86830" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+          <path d="M98 42 Q97 52 100 62" stroke="#C86830" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+          <polygon points="46,36 34,8 62,28" fill="#E8834A"/>
+          <polygon points="114,36 126,8 98,28" fill="#E8834A"/>
+          <polygon points="47,32 38,14 60,28" fill="#F4A0A0" opacity="0.7"/>
+          <polygon points="113,32 122,14 100,28" fill="#F4A0A0" opacity="0.7"/>
+          <line id="browL" x1="50" y1="48" x2="68" y2="54" stroke="#7A2200" stroke-width="3" stroke-linecap="round" opacity="0"/>
+          <line id="browR" x1="110" y1="48" x2="92" y2="54" stroke="#7A2200" stroke-width="3" stroke-linecap="round" opacity="0"/>
+          <ellipse cx="63" cy="68" rx="11" ry="12" fill="#2D5A1B" id="eyeL"/>
+          <ellipse cx="97" cy="68" rx="11" ry="12" fill="#2D5A1B" id="eyeR"/>
+          <ellipse cx="63" cy="68" rx="5" ry="9" fill="#111" id="pupilL"/>
+          <ellipse cx="97" cy="68" rx="5" ry="9" fill="#111" id="pupilR"/>
+          <circle cx="66" cy="64" r="2.5" fill="white" opacity="0.9"/>
+          <circle cx="100" cy="64" r="2.5" fill="white" opacity="0.9"/>
+          <path d="M76 80 L80 77 L84 80 L80 83 Z" fill="#E8706A"/>
+          <path id="mouthL" d="M80 83 Q74 90 70 88" stroke="#C86830" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path id="mouthR" d="M80 83 Q86 90 90 88" stroke="#C86830" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <line x1="30" y1="78" x2="60" y2="80" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <line x1="28" y1="84" x2="60" y2="84" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <line x1="30" y1="90" x2="60" y2="88" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <line x1="90" y1="80" x2="130" y2="78" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <line x1="90" y1="84" x2="132" y2="84" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <line x1="90" y1="88" x2="130" y2="90" stroke="#8B5E3C" stroke-width="1.2" opacity="0.5"/>
+          <ellipse cx="50" cy="80" rx="10" ry="6" fill="#FFB0A0" opacity="0" id="blushL"/>
+          <ellipse cx="110" cy="80" rx="10" ry="6" fill="#FFB0A0" opacity="0" id="blushR"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="hint" id="hint">Pınar kediyi sevmelisin ki!!! 🫳🏻</div>
+<script>
+const cat=document.getElementById('cat');
+const moodBadge=document.getElementById('moodBadge');
+const heartsWrap=document.getElementById('heartsWrap');
+const sparksWrap=document.getElementById('sparksWrap');
+const purrText=document.getElementById('purrText');
+const hint=document.getElementById('hint');
+const eyeL=document.getElementById('eyeL');
+const eyeR=document.getElementById('eyeR');
+const pupilL=document.getElementById('pupilL');
+const pupilR=document.getElementById('pupilR');
+const blushL=document.getElementById('blushL');
+const blushR=document.getElementById('blushR');
+const mouthL=document.getElementById('mouthL');
+const mouthR=document.getElementById('mouthR');
+const browL=document.getElementById('browL');
+const browR=document.getElementById('browR');
+
+let isPetting=false,isWalking=false;
+let petTimer=null,heartTimer=null,walkTimer=null,zzzTimeout=null;
+let petCount=0;
+let purrAudio=null,purrFadeInterval=null,soundEnabled=true;
+
+function startPurr(){
+  try{
+    clearInterval(purrFadeInterval);
+    if(!purrAudio){
+      purrAudio=new Audio('purr.mp3');
+      purrAudio.loop=true;
+      purrAudio.volume=0;
+    }
+    purrAudio.currentTime=0;
+    purrAudio.play().catch(e=>{ console.log("Ses çalma hatası:", e); });
+    let vol=0;
+    purrFadeInterval=setInterval(()=>{
+      vol=Math.min(0.8,vol+0.05);
+      if(purrAudio) purrAudio.volume=vol;
+      if(vol>=0.8) clearInterval(purrFadeInterval);
+    },60);
+  }catch(e){}
+}
+
+function stopPurr(){
+  try{
+    clearInterval(purrFadeInterval);
+    if(!purrAudio) return;
+    let vol=purrAudio.volume;
+    purrFadeInterval=setInterval(()=>{
+      vol=Math.max(0,vol-0.06);
+      if(purrAudio) purrAudio.volume=vol;
+      if(vol<=0){clearInterval(purrFadeInterval);if(purrAudio)purrAudio.pause();}
+    },60);
+  }catch(e){}
+}
+
+function playAngry(){
+  try {
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const g1=ctx.createGain();
+    g1.gain.setValueAtTime(0.28,ctx.currentTime);
+    g1.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.9);
+    g1.connect(ctx.destination);
+    const o=ctx.createOscillator();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(320,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(65,ctx.currentTime+0.7);
+    const f1=ctx.createBiquadFilter();
+    f1.type='bandpass';
+    f1.frequency.value=750;
+    f1.Q.value=2.2;
+    o.connect(f1);
+    f1.connect(g1);
+    o.start();
+    o.stop(ctx.currentTime+0.9);
+  } catch(e){}
+}
+
+function setFace(mode){
+  if(mode==='happy'){
+    pupilL.setAttribute('ry','11');pupilR.setAttribute('ry','11');
+    pupilL.setAttribute('rx','4');pupilR.setAttribute('rx','4');
+    blushL.setAttribute('opacity','0.55');blushR.setAttribute('opacity','0.55');
+    mouthL.setAttribute('d','M80 83 Q73 93 68 90');
+    mouthR.setAttribute('d','M80 83 Q87 93 92 90');
+    eyeL.setAttribute('ry','11');eyeR.setAttribute('ry','11');
+    browL.setAttribute('opacity','0');browR.setAttribute('opacity','0');
+  }else if(mode==='angry'){
+    pupilL.setAttribute('ry','10');pupilR.setAttribute('ry','10');
+    pupilL.setAttribute('rx','2');pupilR.setAttribute('rx','2');
+    blushL.setAttribute('opacity','0');blushR.setAttribute('opacity','0');
+    mouthL.setAttribute('d','M80 87 Q74 81 70 83');
+    mouthR.setAttribute('d','M80 87 Q86 81 90 83');
+    eyeL.setAttribute('ry','7');eyeR.setAttribute('ry','7');
+    browL.setAttribute('opacity','1');browR.setAttribute('opacity','1');
+  }else{
+    pupilL.setAttribute('ry','9');pupilR.setAttribute('ry','9');
+    pupilL.setAttribute('rx','5');pupilR.setAttribute('rx','5');
+    blushL.setAttribute('opacity','0');blushR.setAttribute('opacity','0');
+    mouthL.setAttribute('d','M80 83 Q74 90 70 88');
+    mouthR.setAttribute('d','M80 83 Q86 90 90 88');
+    eyeL.setAttribute('ry','12');eyeR.setAttribute('ry','12');
+    browL.setAttribute('opacity','0');browR.setAttribute('opacity','0');
+  }
+}
+
+function setMood(text){
+  moodBadge.style.opacity='0';
+  setTimeout(()=>{moodBadge.textContent=text;moodBadge.style.opacity='1';},200);
+}
+
+const petMoods=['ohh 😸','mırr mırr... 🧡','devam et lütfen 😻','çok iyisin 💛','purr purr purr 💕','en sevdiğim şey bu 🐾'];
+const angryMoods=['neden bıraktın!!! 😾','dur bir dakika... 😾','hmph! 😾','HFSSS 😾'];
+const walkMoods=['gidicem ha... 😾','arkamdan bakma! 😾','yeter artık 😾'];
+const returnMoods=['tamam tamam döndüm 😼','aslında kalmak istedim 🐱','sadece bir tur attım'];
+
+function spawnHeart(){
+  if(!isPetting) return;
+  const h=document.createElement('div');h.className='heart';
+  h.textContent=['💛','🧡','💕','💖','✨','😻'][Math.floor(Math.random()*6)];
+  h.style.setProperty('--hx',((Math.random()-0.5)*80)+'px');
+  h.style.fontSize=(14+Math.random()*10)+'px';
+  heartsWrap.appendChild(h);
+  setTimeout(()=>h.remove(),1500);
+  if(isPetting) heartTimer=setTimeout(spawnHeart,460+Math.random()*300);
+}
+
+function spawnSparks(){
+  const emojis=['💢','😤','⚡','💥','😾'];
+  for(let i=0;i<5;i++){
+    const s=document.createElement('div');s.className='spark';
+    s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.fontSize=(14+Math.random()*10)+'px';
+    const angle=(Math.PI*2/5)*i+Math.random()*0.4;
+    const dist=40+Math.random()*35;
+    s.style.setProperty('--sx',(Math.cos(angle)*dist)+'px');
+    s.style.setProperty('--sy',(Math.sin(angle)*dist-30)+'px');
+    s.style.setProperty('--sr',(Math.random()*60-30)+'deg');
+    s.style.animationDelay=(i*0.07)+'s';
+    sparksWrap.appendChild(s);
+    setTimeout(()=>s.remove(),1100);
+  }
+}
+
+function startPet(e){
+  if(isWalking) return;
+  if(e && e.cancelable) e.preventDefault();
+  if(isPetting) return;
+  isPetting=true;petCount=0;
+  cat.classList.remove('angry');
+  cat.classList.add('petting');
+  setFace('happy');
+  hint.style.opacity='0';
+  clearTimeout(walkTimer);
+  if(soundEnabled) startPurr();
+  petTimer=setInterval(()=>{petCount++;setMood(petMoods[Math.min(petCount,petMoods.length-1)]);},900);
+  setMood(petMoods[0]);
+  spawnHeart();
+  const purrs=['purrr... 😻','mrrr 💕','mrrow 🧡','purrrr ✨'];
+  purrText.textContent=purrs[Math.floor(Math.random()*purrs.length)];
+}
+
+function stopPet(){
+  if(!isPetting||isWalking) return;
+  isPetting=false;
+  cat.classList.remove('petting');
+  clearInterval(petTimer);clearTimeout(heartTimer);
+  stopPurr();
+  if(petCount>0){
+    cat.classList.add('angry');
+    setFace('angry');
+    playAngry();
+    spawnSparks();
+    setMood(angryMoods[Math.floor(Math.random()*angryMoods.length)]);
+    walkTimer=setTimeout(walkAway,1200);
+  }else{
+    setFace('normal');
+    setMood('dokunmayı bekliyor... 🐾');
+  }
+}
+
+function walkAway(){
+  if(isPetting) return;
+  isWalking=true;
+  const goRight=Math.random()>0.5;
+  cat.classList.remove('angry');
+  cat.classList.add('walking');
+  setMood(walkMoods[Math.floor(Math.random()*walkMoods.length)]);
+  if(!goRight) cat.style.transform='scaleX(-1)';
+  setTimeout(()=>{
+    cat.classList.remove('walking');
+    cat.classList.add(goRight?'walk-right':'walk-left');
+    setTimeout(()=>{
+      cat.classList.remove('walk-right','walk-left');
+      cat.style.transform=goRight?'scaleX(-1)':'scaleX(1)';
+      cat.classList.add(goRight?'come-from-left':'come-from-right');
+      setTimeout(()=>{
+        cat.classList.remove('come-from-left','come-from-right');
+        cat.style.transform='';
+        isWalking=false;
+        setFace('normal');
+        setMood(returnMoods[Math.floor(Math.random()*returnMoods.length)]);
+        hint.style.opacity='1';
+        setTimeout(()=>setMood('dokunmayı bekliyor... 🐾'),3000);
+      },1900);
+    },2300);
+  },400);
+}
+
+function scheduleZzz(){
+  zzzTimeout=setTimeout(()=>{if(!isPetting&&!isWalking)setMood('zzz... 😴');scheduleZzz();},14000);
+}
+scheduleZzz();
+
+function blink(){
+  if(isPetting){setTimeout(blink,3000+Math.random()*4000);return;}
+  eyeL.setAttribute('ry','2');eyeR.setAttribute('ry','2');
+  setTimeout(()=>{eyeL.setAttribute('ry','12');eyeR.setAttribute('ry','12');setTimeout(blink,3000+Math.random()*5000);},120);
+}
+setTimeout(blink,2500);
+setMood('dokunmayı bekliyor... 🐾');
+</script>
+</body>
+</html>
