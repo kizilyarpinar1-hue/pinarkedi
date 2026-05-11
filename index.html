@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pınar Kedi 🐱</title>
+<link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #FDF6EC;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(255,180,100,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(255,140,60,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.floor {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 38vh;
+  background: linear-gradient(180deg, #F5E6D0 0%, #EDD8B8 100%);
+  border-top: 3px solid rgba(200,160,100,0.25);
+  z-index: 0;
+}
+.title {
+  position: fixed;
+  top: 32px;
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: clamp(22px, 5vw, 38px);
+  color: #E8834A;
+  letter-spacing: 2px;
+  z-index: 10;
+  text-shadow: 0 2px 12px rgba(232,131,74,0.2);
+  animation: fadeDown 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+  text-align: center;
+  padding: 0 16px;
+}
+@keyframes fadeDown {
+  from { opacity:0; transform: translateY(-20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.mood-badge {
+  position: fixed;
+  top: 82px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(180,130,80,0.75);
+  letter-spacing: 1px;
+  z-index: 10;
+  min-height: 20px;
+  text-align: center;
+  padding: 0 16px;
+  transition: opacity 0.3s;
+  animation: fadeDown 1s 0.4s both;
+}
+.hint {
+  position: fixed;
+  bottom: 28px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(180,140,100,0.75);
+  letter-spacing: 0.5px;
+  z-index: 10;
+  text-align: center;
+  padding: 0 20px;
+  animation​​​​​​​​​​​​​​​​
